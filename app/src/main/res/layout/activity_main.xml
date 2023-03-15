@@ -4,53 +4,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Iniciar sesión"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- app:layout_constraintBottom_toTopOf="@+id/btn_mail" -->
+    <!-- app:layout_constraintTop_toBottomOf="@+id/btn_phone" -->
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btn_mail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="636dp"
-        android:text="Google"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_marginTop="56dp"
+        android:text="@string/email_password"
+        app:layout_constraintBottom_toTopOf="@+id/btn_google"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/btn_google"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="588dp"
-        android:text="Email Password"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp" />
+        android:text="@string/google"
+        app:layout_constraintBottom_toTopOf="@+id/btn_phone"
+        app:layout_constraintTop_toBottomOf="@+id/btn_mail"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/btn_phone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="540dp"
-        android:text="Phone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="-2dp" />
+        android:text="@string/phone"
+        app:layout_constraintBottom_toTopOf="@+id/btn_fbk"
+        app:layout_constraintTop_toBottomOf="@+id/btn_google"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="21dp" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/btn_fbk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Facebook"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2"
-        app:layout_constraintVertical_bias="0.088"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_marginTop="4dp"
+        android:text="@string/facebook"
+        app:layout_constraintTop_toBottomOf="@+id/btn_phone"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
