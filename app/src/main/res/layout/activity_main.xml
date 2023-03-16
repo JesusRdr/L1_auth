@@ -16,16 +16,18 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
         android:text="@string/email_password"
-        app:layout_constraintBottom_toTopOf="@+id/btn_google"
+        app:layout_constraintBottom_toTopOf="@+id/btnGoogle"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="16dp" />
 
     <Button
-        android:id="@+id/btn_google"
+        android:id="@+id/btnGoogle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/google"
+        android:textAlignment="textStart"
+        app:iconPadding="16dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_phone"
         app:layout_constraintTop_toBottomOf="@+id/btn_mail"
         tools:ignore="MissingConstraints"
@@ -37,7 +39,7 @@
         android:layout_height="wrap_content"
         android:text="@string/phone"
         app:layout_constraintBottom_toTopOf="@+id/btn_fbk"
-        app:layout_constraintTop_toBottomOf="@+id/btn_google"
+        app:layout_constraintTop_toBottomOf="@+id/btnGoogle"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="21dp" />
 
