@@ -31,6 +31,9 @@ class MainActivity : AppCompatActivity() {
         setup()
         }
 
+
+
+
     private fun setup() {
         val btnG: Button = findViewById(R.id.btnGoogle)
         btnG.setOnClickListener {
@@ -41,6 +44,14 @@ class MainActivity : AppCompatActivity() {
 
             startActivityForResult(googleClient.signInIntent, GOOGLE_SIGN_IN)
         }
+        val btnPhoneval: Button = findViewById(R.id.btn_phone)
+        btnPhoneval.setOnClickListener {
+            // Configuracion para boton de Phone
+            val intent: Intent = Intent(this, pantalla_phone:: class.java)
+            startActivity(intent)
+        }
+
+
     }
 
     private fun session(){
