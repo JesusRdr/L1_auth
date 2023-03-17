@@ -14,6 +14,16 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
+
+/*
+VIDEO Mail Logging
+https://youtu.be/dpURgJ4HkMk
+VIDEO Google Logging
+https://youtu.be/xjsgRe7FTCU
+VIDEO Phone Logging
+https://www.youtube.com/watch?v=zKa14ULHGBQ
+
+ */
 class MainActivity : AppCompatActivity() {
 
     private val GOOGLE_SIGN_IN = 100
