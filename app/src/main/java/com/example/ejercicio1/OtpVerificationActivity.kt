@@ -41,6 +41,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_otp_verification)
 
+        title= "OTP"
         OTP = intent.getStringExtra("OTP").toString()
         resendToken = intent.getParcelableExtra("resendToken")!!
         phoneNumber = intent.getStringExtra("phoneNumber")!!
@@ -86,7 +87,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         Handler(Looper.myLooper()!!).postDelayed(Runnable {
             resend_view.visibility = View.VISIBLE
             resend_view.isEnabled = true
-        }, 10000 )
+        }, 60000 )
     }
 
     private fun resendVerificationCode(){
@@ -201,14 +202,14 @@ class OtpVerificationActivity : AppCompatActivity() {
 
         override fun afterTextChanged(p0: Editable?) {
         val text = p0.toString()
-        when(view.id){
+            when(view.id){
                 R.id.editTextNumber -> if(text.length == 1) inOPT_2.requestFocus()
                 R.id.editTextNumber5 -> if(text.length == 1) inOPT_3.requestFocus() else if (text.isNotEmpty()) inOPT_1.requestFocus()
                 R.id.editTextNumber6 -> if(text.length == 1) inOPT_4.requestFocus() else if (text.isNotEmpty()) inOPT_2.requestFocus()
                 R.id.editTextNumber7 -> if(text.length == 1) inOPT_5.requestFocus() else if (text.isNotEmpty()) inOPT_3.requestFocus()
                 R.id.editTextNumber8 -> if(text.length == 1) inOPT_6.requestFocus() else if (text.isNotEmpty()) inOPT_4.requestFocus()
                 R.id.editTextNumber9 -> if(text.isEmpty()) inOPT_5.requestFocus()
-        }
+            }
         }
 
     }

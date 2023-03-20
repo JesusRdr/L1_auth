@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        title="HOME"
 
         val btn: Button = findViewById(R.id.btn_mail)
         btn.setOnClickListener {
@@ -40,9 +41,6 @@ class MainActivity : AppCompatActivity() {
         session()
         setup()
         }
-
-
-
 
     private fun setup() {
         val btnG: Button = findViewById(R.id.btnGoogle)
@@ -60,8 +58,6 @@ class MainActivity : AppCompatActivity() {
             val intent: Intent = Intent(this, pantalla_phone:: class.java)
             startActivity(intent)
         }
-
-
     }
 
     private fun session(){

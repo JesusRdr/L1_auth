@@ -10,5 +10,4 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="prefs_file">com.example.ejercicio1.PREFERENCE_FILE_KEY</string> <!-- STRING PARA FICHERO - SALIR Y ENTRAR DE LA APP MANTENIENDO LA SESION -->
-
 </resources>

@@ -1,5 +1,6 @@
 package com.example.ejercicio1
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,9 +24,18 @@ class pantalla_phone : AppCompatActivity() {
     private lateinit var number : String
     private  lateinit var mProgressBar : ProgressBar
 
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pantalla_phone)
+
+        title= "Phone Authentication"
+
+        val btn_8: Button = findViewById(R.id.btnBack2)
+        btn_8.setOnClickListener {
+            val intent: Intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
 
         init()
         sendOTP_btn.setOnClickListener {
