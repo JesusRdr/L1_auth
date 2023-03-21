@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 enum class ProviderType{
     BASIC,
@@ -24,7 +26,15 @@ class Logged_screen : AppCompatActivity() {
         val provider = bundle?.getString("provider")
        setup(email ?: "", provider ?: "")
 
-
+        if(provider == ProviderType.BASIC.name){
+            //LinearNames.visibility = android.view.View.VISIBLE
+            val user = FirebaseAuth.getInstance().currentUser
+            //user?.let {
+                //val name = user.displayName
+                //txtNameFromDB.text = name.toString()
+            //}
+            checkIfEmailVerified(user)
+        }
 
         //GUARDAR DATOS DE USUARIO AL CAMBIAR DE PANTALLAS
         // GESTION DE SESIONES
@@ -34,6 +44,8 @@ class Logged_screen : AppCompatActivity() {
         prefs.apply()
 
     }
+
+
     private fun setup(email: String, provider: String) {
         title = "WELCOME"
 
@@ -54,4 +66,21 @@ class Logged_screen : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+
+    private fun checkIfEmailVerified(user : FirebaseUser?){
+        if (user != null) {
+            if (user.isEmailVerified) {
+                Toast.makeText(this,"Verified account, thanks!", Toast.LENGTH_LONG).show()
+            }  else {
+                //FirebaseAuth.getInstance().signOut() //restart this activity
+                //startActivity(Intent(this,Logged_screen::class.java))
+                Toast.makeText(this,"The user is not verified", Toast.LENGTH_LONG).show()
+
+                // val intent: Intent = Intent(this, MainActivity:: class.java)
+                // startActivity(intent)
+
+            }
+        }
+    }
         }
