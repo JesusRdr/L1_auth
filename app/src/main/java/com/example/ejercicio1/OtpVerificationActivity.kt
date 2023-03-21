@@ -1,5 +1,6 @@
 package com.example.ejercicio1
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -87,7 +88,7 @@ class OtpVerificationActivity : AppCompatActivity() {
         Handler(Looper.myLooper()!!).postDelayed(Runnable {
             resend_view.visibility = View.VISIBLE
             resend_view.isEnabled = true
-        }, 60000 )
+        }, 10000 )
     }
 
     private fun resendVerificationCode(){
@@ -200,6 +201,7 @@ class OtpVerificationActivity : AppCompatActivity() {
 
         }
 
+        @SuppressLint("SuspiciousIndentation")
         override fun afterTextChanged(p0: Editable?) {
         val text = p0.toString()
             when(view.id){

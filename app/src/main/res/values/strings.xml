@@ -9,5 +9,8 @@
     <string name="back">Back</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="facebook_app_id">1234</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">56789</string>
     <string name="prefs_file">com.example.ejercicio1.PREFERENCE_FILE_KEY</string> <!-- STRING PARA FICHERO - SALIR Y ENTRAR DE LA APP MANTENIENDO LA SESION -->
 </resources>

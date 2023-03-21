@@ -13,7 +13,12 @@ import com.google.android.gms.common.api.Api
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-
+/*import com.facebook.login.LoginManager
+import com.facebook.CallbackManager
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.google.firebase.auth.FacebookAuthProvider */
+import javax.security.auth.callback.Callback
 
 /*
 VIDEO Mail Logging
@@ -28,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     private val GOOGLE_SIGN_IN = 100
 
+   //  private val callbackManager=CallbackManager.Factory.create()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,6 +47,37 @@ class MainActivity : AppCompatActivity() {
             }
         session()
         setup()
+/*
+        val btnF: Button = findViewById(R.id.btn_fbk)
+        btnF.setOnClickListener {
+            LoginManager.getInstance().registerCallback(callbackManager,
+            object : FacebookCallback<LoginResult>{
+                override fun onSuccess(result: LoginResult?){
+                    result?.let{
+                        val token = it.accessToken
+                        val credential = FacebookAuthProvider.getCredential(token.token, null)
+                        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener {
+                            if(it.isSuccessful) {
+                                showHome(account.email ?: "", ProviderType.GOOGLE)
+                            }else{
+                                showAlert()
+
+                            }
+                        }
+                    }
+                }
+                override fun onCancel(){
+                    TODO("Not yet implemented")
+                }
+                override fun onError(result: FacebookException?){
+                    showAlert()
+                }
+            })
+        }
+
+
+*/
+
         }
 
     private fun setup() {
