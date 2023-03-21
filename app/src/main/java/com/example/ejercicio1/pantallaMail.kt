@@ -3,6 +3,10 @@ package com.example.ejercicio1
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -18,6 +22,10 @@ class pantallaMail : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pantalla_mail)
+
+        val btn3: Button = findViewById(R.id.btnIn)
+        btn3.visibility = View.INVISIBLE
+
         // Constructor para cambiar de pantalla "BACK"
         val btn_1: Button = findViewById(R.id.btnBack)
         btn_1.setOnClickListener {
@@ -26,6 +34,19 @@ class pantallaMail : AppCompatActivity() {
         }
             // Setup
             setup()
+
+        val btn_no_val: Button = findViewById(R.id.btn_N)
+        btn_no_val.setOnClickListener {
+            val intent: Intent = Intent(this, Logged_screen::class.java)
+            startActivity(intent)
+        }
+
+        val btn_yes_val: Button = findViewById(R.id.btn_Y)
+        btn_yes_val.setOnClickListener {
+            val intent: Intent = Intent(this, MfaPhoneActivity::class.java)
+            startActivity(intent)
+        }
+
     }
         // Constructor para hacer signUP
         private fun setup() {
@@ -38,9 +59,23 @@ class pantallaMail : AppCompatActivity() {
                   // DOCUMENTACION -->  auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this)
                 FirebaseAuth.getInstance().createUserWithEmailAndPassword(edt.text.toString(),edt2.text.toString()).addOnCompleteListener {
                     if(it.isSuccessful) {
-                        //showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                        // showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
                         val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
                         verifyEmail(user)
+
+                        Handler(Looper.myLooper()!!).postDelayed(Runnable {
+                            if (user?.isEmailVerified == true){
+                            val btn3: Button = findViewById(R.id.btnIn)
+                            btn3.visibility = View.VISIBLE
+                        }
+                        }, 30000 )
+
+/*
+                            val intent = Intent(this@pantallaMail, MfaPhoneActivity::class.java)
+                            intent.putExtra("USUARIO", user)
+                            startActivity(intent)
+
+  */
                     }else{
                         showAlert()
 
@@ -50,7 +85,7 @@ class pantallaMail : AppCompatActivity() {
         }
 
         // Constructor para hacer Login
-        val btn3: Button = findViewById(R.id.btnIn)
+       val btn3 : Button = findViewById(R.id.btnIn)
         btn3.setOnClickListener {
             val edt: EditText = findViewById<EditText>(R.id.editTextTextEmailAddress)
             val edt2: EditText = findViewById<EditText>(R.id.editTextTextPassword)
@@ -75,6 +110,7 @@ class pantallaMail : AppCompatActivity() {
     val dialog: AlertDialog = builder.create()
     dialog.show()
 }
+
     private fun showHome(email: String, provider: ProviderType){
         val homeIntent = Intent(this, Logged_screen::class.java).apply {
             putExtra("email", email)
@@ -88,8 +124,9 @@ class pantallaMail : AppCompatActivity() {
             ?.addOnCompleteListener(this){
                     task->
                 if(task.isComplete){
-                    Toast.makeText(this,"Email has send", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Email sent, you have 30 seconds to verify...", Toast.LENGTH_LONG).show()
                     //showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+
                 }
                 else{
                     Toast.makeText(this,"An error has occurred while sending email", Toast.LENGTH_LONG).show()
