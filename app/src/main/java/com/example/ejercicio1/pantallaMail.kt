@@ -64,17 +64,23 @@ class pantallaMail : AppCompatActivity() {
                         verifyEmail(user)
 
                         Handler(Looper.myLooper()!!).postDelayed(Runnable {
-                            if (user?.isEmailVerified == true){
-                            val btn3: Button = findViewById(R.id.btnIn)
-                            btn3.visibility = View.VISIBLE
-                        }
-                        }, 30000 )
+                            for (i in 1..30){
+                                waiting()
+                                println(user?.isEmailVerified)
+                            }
+                            println("terminó el FOR")
+                            if (user?.isEmailVerified==true) {
+                                val btn10: Button = findViewById(R.id.btnIn)
+                                btn10.visibility = View.VISIBLE
+                            }
+                            println("terminó el IF")
+                        }, 10000 )
+
 
 /*
                             val intent = Intent(this@pantallaMail, MfaPhoneActivity::class.java)
                             intent.putExtra("USUARIO", user)
                             startActivity(intent)
-
   */
                     }else{
                         showAlert()
@@ -100,7 +106,7 @@ class pantallaMail : AppCompatActivity() {
                 }
             }
         }
-    }
+        }
 
     private fun showAlert() {
     val builder = AlertDialog.Builder(this)
@@ -119,12 +125,24 @@ class pantallaMail : AppCompatActivity() {
         startActivity(homeIntent)
     }
 
+    fun waiting() {
+        println("Stopping…")
+
+        try {
+            // sleep for one second
+            Thread.sleep(1000)
+        } catch (e: InterruptedException) {
+            e.printStackTrace()
+        }
+        println("Resuming…")
+    }
+
     private fun verifyEmail(user:FirebaseUser?){
         user?.sendEmailVerification()
             ?.addOnCompleteListener(this){
                     task->
                 if(task.isComplete){
-                    Toast.makeText(this,"Email sent, you have 30 seconds to verify...", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Email sent, you have 20 seconds to verify...", Toast.LENGTH_LONG).show()
                     //showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
 
                 }
