@@ -15,19 +15,40 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import java.util.concurrent.TimeUnit
+import com.google.firebase.auth.MultiFactorResolver
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.PhoneMultiFactorGenerator
+import com.google.firebase.auth.PhoneMultiFactorInfo
+import com.google.firebase.auth.FirebaseAuthMultiFactorException
+//import com.google.firebase.auth.databinding.FragmentMultiFactorSignInBinding
+
+
+
+//import com.google.firebase.quickstart.auth.databinding.FragmentMultiFactorSignInBinding
+
 import java.util.Objects
 
 // import kotlinx.android.synthetic.main.activity_pantalla_mail.*
 private var control: Number = 2
 
 class pantallaMail : AppCompatActivity() {
-
+/*
+    private var _binding: FragmentMultiFactorSignInBinding? = null
+    private val binding: FragmentMultiFactorSignInBinding
+        get() = _binding!!
+*/
     private lateinit var RESENDTOKEN: PhoneAuthProvider.ForceResendingToken
     private lateinit var OTP: String
 
     private lateinit var number: String
     private lateinit var auth: FirebaseAuth
+
+    //private lateinit var multiFactorResolver: MultiFactorResolver
+
+    private var lastPhoneAuthCredential: PhoneAuthCredential? = null
+    private var lastVerificationId: String? = null
 
     //private lateinit var verificationId: String
     //private lateinit var verificationCode: PhoneAuthProvider.ForceResendingToken
@@ -45,6 +66,8 @@ class pantallaMail : AppCompatActivity() {
                 edit_CODE.visibility = View.INVISIBLE
                 val verification_val: Button = findViewById(R.id.btn_Verify)
                 verification_val.visibility = View.INVISIBLE
+                val verification_val2: Button = findViewById(R.id.btn_Verify2)
+                verification_val2.visibility = View.INVISIBLE
     }
 
         auth = FirebaseAuth.getInstance()
@@ -169,115 +192,197 @@ class pantallaMail : AppCompatActivity() {
             }
         }
 
-
         // Constructor para hacer Login. YA DEBE ESTAR LLENO EL NUMERO DE TELEFONO PARA HACER EL LOGIN
+                /*
+            val btn3: Button = findViewById(R.id.btnIn)
+            btn3.setOnClickListener {
+                val edt: EditText = findViewById<EditText>(R.id.editTextTextEmailAddress)
+                val edt2: EditText = findViewById<EditText>(R.id.editTextTextPassword)
+                if (edt.text.isNotEmpty() && edt2.text.isNotEmpty()) {
+                    //checkIfEmailVerified(user)
 
+                    /*
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(edt.text.toString(),edt2.text.toString()).addOnCompleteListener {
+                        if(it.isSuccessful) {
+                            val user = FirebaseAuth.getInstance().currentUser
+                            checkIfEmailVerified(user)
+                            waiting()
+                            showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+
+                        }else{
+                            showAlert()
+                        }
+                    }
+     */
+
+                    FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(edt.text.toString(), edt2.text.toString())
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // User is not enrolled with a second factor and is successfully
+                                // signed in.
+                                checkIfEmailVerified(user)
+                                val user = FirebaseAuth.getInstance().currentUser
+
+                                showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                                //     return@addOnCompleteListener
+                               // showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                            }
+                            if (task.exception is FirebaseAuthMultiFactorException) {
+                                println(task.exception)
+                                val multiFactorResolver = (task.exception as FirebaseAuthMultiFactorException).resolver
+                                // Ask user which second factor to use. Then, get
+                                // the selected hint:
+                                //   val selectedHint = multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
+                                // Send the SMS verification code.
+                                var number: String
+                                val phone_editText: EditText = findViewById(R.id.editTextPhone)
+                                number = phone_editText.text.trim().toString()
+                                if (number.isNotEmpty()) {
+                                    if (number.length == 10) {  // EL NUMERO TIENE LA LONGITUD DESEADA
+                                        number = "+52$number"
+
+                                        PhoneAuthProvider.verifyPhoneNumber(
+                                            PhoneAuthOptions.newBuilder()
+                                                .setActivity(this)
+                                                .setMultiFactorSession(multiFactorResolver.session)
+                                                //   .setMultiFactorHint(selectedHint)
+                                                .setCallbacks(callbacks)
+                                                .setTimeout(30L, TimeUnit.SECONDS)
+                                                .build()
+                                        )
+
+                                    } else {
+                                        Toast.makeText(
+                                            this,
+                                            "Please Enter a valid Number",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                } else {
+                                    Toast.makeText(this, "Please Enter a Number", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+
+
+                            } else {
+                                // Handle other errors such as wrong password.
+                            }
+                        }
+
+                } // ESTE CIERRA CON if (edt.text.isNotEmpty() && . . .
+            }
+            */
+
+        // Constructor para hacer Login
         val btn3: Button = findViewById(R.id.btnIn)
         btn3.setOnClickListener {
             val edt: EditText = findViewById<EditText>(R.id.editTextTextEmailAddress)
             val edt2: EditText = findViewById<EditText>(R.id.editTextTextPassword)
-            if (edt.text.isNotEmpty() && edt2.text.isNotEmpty()) {
+            val edt3: EditText = findViewById<EditText>(R.id.editPhoneMFA)
+            if (edt.text.isNotEmpty() && edt2.text.isNotEmpty() && edt3.text.isNotEmpty()){
                 //checkIfEmailVerified(user)
-                /*
+
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(edt.text.toString(),edt2.text.toString()).addOnCompleteListener {
                     if(it.isSuccessful) {
-                        val user = FirebaseAuth.getInstance().currentUser
-                        checkIfEmailVerified(user)
-                        waiting()
+                        // USER NOT ENROLLED WITH MFA
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
-
-                    }else{
-                        showAlert()
                     }
-                }
- */
+                    if (it.exception is FirebaseAuthMultiFactorException) { // EN LUGAR DE IT, Tenía "task"
+                        val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
 
-                FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword(edt.text.toString(), edt2.text.toString())
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            // User is not enrolled with a second factor and is successfully
-                            // signed in.
-                            val user = FirebaseAuth.getInstance().currentUser
-                            checkIfEmailVerified(user)
-                            //     return@addOnCompleteListener
+                        val phone_editText2: EditText = findViewById(R.id.editPhoneMFA)
+                        number = phone_editText2.text.trim().toString()
+                        number = "+52$number"
 
-                            //task.exception = FirebaseAuthMultiFactorException
-                            // Cómo le digo al código, que para este usuario sí quiero activar la MFA?
+                                // Ask user which second factor to use. Then, get
+                                // the selected hint:
+                        val selectedIndex = 0
+                        val selectedHint = multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
+                        //val selectedHint = multiFactorResolver.hints as PhoneMultiFactorInfo
 
-                            val edit_CODE2: EditText = findViewById(R.id.editTextCODE)
-                            edit_CODE2.visibility = View.VISIBLE
-                            val verification_val2: Button = findViewById(R.id.btn_Verify)
-                            verification_val2.visibility = View.VISIBLE
-                        }
-                        if (task.exception is FirebaseAuthMultiFactorException) {
-                            println(task.exception)
-                            val multiFactorResolver = (task.exception as FirebaseAuthMultiFactorException).resolver
-                            // Ask user which second factor to use. Then, get
-                            // the selected hint:
-                            //   val selectedHint = multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
-                            // Send the SMS verification code.
-                            var number: String
-                            val phone_editText: EditText = findViewById(R.id.editTextPhone)
-                            number = phone_editText.text.trim().toString()
-                            if (number.isNotEmpty()) {
-                                if (number.length == 10) {  // EL NUMERO TIENE LA LONGITUD DESEADA
-                                    number = "+52$number"
+                        // Send the SMS verification code.
+                        PhoneAuthProvider.verifyPhoneNumber(
+                            PhoneAuthOptions.newBuilder(auth)
+                                .setActivity(this)
+                                .setMultiFactorSession(multiFactorResolver.session)
+                                .setMultiFactorHint(selectedHint)
+                                .setCallbacks(generateCallbacks())
+                                .setTimeout(60L, TimeUnit.SECONDS)
+                                .build()
+                        )
 
-                                    PhoneAuthProvider.verifyPhoneNumber(
-                                        PhoneAuthOptions.newBuilder()
-                                            .setActivity(this)
-                                            .setMultiFactorSession(multiFactorResolver.session)
-                                            //   .setMultiFactorHint(selectedHint)
-                                            .setCallbacks(callbacks)
-                                            .setTimeout(30L, TimeUnit.SECONDS)
-                                            .build()
-                                    )
+                        val edit_CODE: EditText = findViewById(R.id.editTextCODE)
+                        edit_CODE.visibility = View.VISIBLE
+                        val verification_val2: Button = findViewById(R.id.btn_Verify2)
+                        verification_val2.visibility = View.VISIBLE
+
+
+                    } else {
+                        // Handle other errors such as wrong password.
+                        println("Algo metiste mal para mandar el mensaje")
+                    }
+
+                }  // CIERRA EL TASK  FirebaseAuth.getInstance()...
+            }
+            println("NO INTRODUJO VALORES EN EL CORREO // PASSWORD")
+        }
+
+        val btn16: Button = findViewById(R.id.btn_Verify2)
+        btn16.setOnClickListener {
+            OTP = intent.getStringExtra("OTP").toString()
+            val edit_verification_val: EditText = findViewById(R.id.editTextCODE)
+            val OTP_CODE_typed = edit_verification_val.text.toString()
+
+            if (OTP_CODE_typed.isNotEmpty()) {
+                println("si entró al primer IF (NOT EMPTY)")
+                if (OTP_CODE_typed.length == 6) {
+                    println("si entró al SEGUNDO IF == 6")
+                    // Ask user for the SMS verification code, then use it to get
+                    // a PhoneAuthCredential:
+
+                    val credential =
+                        PhoneAuthProvider.getCredential(OTP, OTP_CODE_typed)
+                    // Initialize a MultiFactorAssertion object with the
+                    // PhoneAuthCredential.
+                    val multiFactorAssertion: MultiFactorAssertion =
+                        PhoneMultiFactorGenerator.getAssertion(credential)
+                    //if (::multiFactorResolver.isInitialized) {
+                        // Complete sign-in.
+                    // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
+                    val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
+
+                        multiFactorResolver.resolveSignIn(multiFactorAssertion)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    val edt: EditText =
+                                        findViewById<EditText>(R.id.editTextTextEmailAddress)
+                                    val edt2: EditText =
+                                        findViewById<EditText>(R.id.editTextTextPassword)
+                                    println("ENTRó A AUTENTICAR")
+                                    FirebaseAuth.getInstance().signInWithEmailAndPassword(
+                                        edt.text.toString(),
+                                        edt2.text.toString()
+                                    ).addOnCompleteListener {
+                                        showHome(it.result?.user?.email ?: "", ProviderType.PRO)
+                                    }
+
 
                                 } else {
-                                    Toast.makeText(
-                                        this,
-                                        "Please Enter a valid Number",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    println("NO SE PORQUE, PERO JUSTO ANTES DE AUTENTICAR.... NO AUTENTICó")
                                 }
-                            } else {
-                                Toast.makeText(this, "Please Enter a Number", Toast.LENGTH_SHORT)
-                                    .show()
+                                // ...
                             }
+                   // }else{println("NO ESTÁ INICIALIZADA LA VARIABLE:   multiFactorResolver")}
 
+                } else {
+                    Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
 
-                        } else {
-                            // Handle other errors such as wrong password.
-                        }
-                    }
-
-            } // ESTE CIERRA CON if (edt.text.isNotEmpty() && . . .
-        }
-
-/*
-        val btn12: Button = findViewById(R.id.btn_Verify)
-        btn12.setOnClickListener {
-// Ask user for the SMS verification code, then use it to get
-// a PhoneAuthCredential:
-            val credential = PhoneAuthProvider.getCredential(verificationId, verificationCode)
-
-// Initialize a MultiFactorAssertion object with the
-// PhoneAuthCredential.
-            val multiFactorAssertion: MultiFactorAssertion =
-                PhoneMultiFactorGenerator.getAssertion(credential)
-
-// Complete sign-in.
-            multiFactorResolver.resolveSignIn(multiFactorAssertion).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // User successfully signed in with the
-                    // second factor phone number.
                 }
-                // ...
+            }else {
+                Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
             }
         }
-        */
-
     }
 
     private fun showAlert() {
@@ -446,5 +551,34 @@ class pantallaMail : AppCompatActivity() {
 
             }
         }
+    }
+
+    private fun generateCallbacks(): PhoneAuthProvider.OnVerificationStateChangedCallbacks {
+        return object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            override fun onVerificationCompleted(phoneAuthCredential: PhoneAuthCredential) {
+                lastPhoneAuthCredential = phoneAuthCredential
+                //binding.finishMfaSignIn.performClick()
+                Toast.makeText(this@pantallaMail, "Verification complete!", Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                lastVerificationId = verificationId
+                //binding.finishMfaSignIn.isClickable = true
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                Toast.makeText(this@pantallaMail, "Error: ${e.message}", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    private fun getResolverFromArguments(arguments: Bundle): MultiFactorResolver {
+        return arguments.getParcelable(EXTRA_MFA_RESOLVER)!!
+    }
+    companion object {
+        private const val KEY_VERIFICATION_ID = "key_verification_id"
+        const val EXTRA_MFA_RESOLVER = "EXTRA_MFA_RESOLVER"
     }
 }

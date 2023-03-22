@@ -13,7 +13,8 @@ import com.google.firebase.auth.FirebaseUser
 
 enum class ProviderType{
     BASIC,
-    GOOGLE
+    GOOGLE,
+    PRO
 }
 
 class Logged_screen : AppCompatActivity() {
