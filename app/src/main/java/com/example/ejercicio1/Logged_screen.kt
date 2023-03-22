@@ -33,7 +33,7 @@ class Logged_screen : AppCompatActivity() {
                 //val name = user.displayName
                 //txtNameFromDB.text = name.toString()
             //}
-            checkIfEmailVerified(user)
+            //  checkIfEmailVerified(user)
         }
         //GUARDAR DATOS DE USUARIO AL CAMBIAR DE PANTALLAS
         // GESTION DE SESIONES
