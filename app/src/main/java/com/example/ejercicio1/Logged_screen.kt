@@ -35,7 +35,6 @@ class Logged_screen : AppCompatActivity() {
             //}
             checkIfEmailVerified(user)
         }
-
         //GUARDAR DATOS DE USUARIO AL CAMBIAR DE PANTALLAS
         // GESTION DE SESIONES
         val prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
@@ -44,7 +43,6 @@ class Logged_screen : AppCompatActivity() {
         prefs.apply()
 
     }
-
 
     private fun setup(email: String, provider: String) {
         title = "WELCOME"
@@ -67,7 +65,6 @@ class Logged_screen : AppCompatActivity() {
             }
         }
 
-
     private fun checkIfEmailVerified(user : FirebaseUser?){
         if (user != null) {
             if (user.isEmailVerified) {
@@ -83,4 +80,4 @@ class Logged_screen : AppCompatActivity() {
             }
         }
     }
-        }
+}

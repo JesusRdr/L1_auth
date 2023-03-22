@@ -18,14 +18,14 @@
 
     <TextView
         android:id="@+id/emailTextView"
-        android:layout_width="197dp"
-        android:layout_height="72dp"
+        android:layout_width="246dp"
+        android:layout_height="71dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="528dp"
         android:foregroundTint="#150606"
         android:text="TextView"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

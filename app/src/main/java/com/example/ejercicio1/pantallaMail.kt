@@ -8,9 +8,11 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.*
+import java.util.concurrent.TimeUnit
 
 // import kotlinx.android.synthetic.main.activity_pantalla_mail.*
 
@@ -55,9 +57,9 @@ class pantallaMail : AppCompatActivity() {
                                     val btn_12: Button =findViewById(R.id.btnIn)
                                     btn_12.visibility = View.VISIBLE
                                 } } }*/
+
                     }else{
                         showAlert()
-
                     }
                 }
             }
@@ -70,17 +72,68 @@ class pantallaMail : AppCompatActivity() {
             val edt2: EditText = findViewById<EditText>(R.id.editTextTextPassword)
             if (edt.text.isNotEmpty() && edt2.text.isNotEmpty()){
                 //checkIfEmailVerified(user)
+
                 FirebaseAuth.getInstance().signInWithEmailAndPassword(edt.text.toString(),edt2.text.toString()).addOnCompleteListener {
                     if(it.isSuccessful) {
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
                     }else{
                         showAlert()
-
                     }
                 }
+             /*
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(edt.toString(),
+                    edt2.toString()
+                ).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                            // User is not enrolled with a second factor and is successfully
+                            // signed in.
+                            // ...
+                            return@addOnCompleteListener
+                        }
+                        if (task.exception is FirebaseAuthMultiFactorException) {
+                            val multiFactorResolver =(task.exception as FirebaseAuthMultiFactorException).resolver
+                            // Ask user which second factor to use. Then, get
+                            // the selected hint:
+                            val selectedHint =
+                                multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
+                            // Send the SMS verification code.
+                            PhoneAuthProvider.verifyPhoneNumber(
+                                PhoneAuthOptions.newBuilder()
+                                    .setActivity(this)
+                                    .setMultiFactorSession(multiFactorResolver.session)
+                                    .setMultiFactorHint(selectedHint)
+                                    .setCallbacks(generateCallbacks())
+                                    .setTimeout(30L, TimeUnit.SECONDS)
+                                    .build()
+                            )
+
+                            // Ask user for the SMS verification code, then use it to get
+                            // a PhoneAuthCredential:
+                            val credential =
+                                PhoneAuthProvider.getCredential(verificationId, verificationCode)
+
+                            // Initialize a MultiFactorAssertion object with the
+                            // PhoneAuthCredential.
+                            val multiFactorAssertion: MultiFactorAssertion =
+                                PhoneMultiFactorGenerator.getAssertion(credential)
+
+                            // Complete sign-in.
+                            multiFactorResolver
+                                .resolveSignIn(multiFactorAssertion)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        // User successfully signed in with the
+                                        // second factor phone number.
+                                    }
+                                    // ...
+                                }
+                        } else {
+                            // Handle other errors such as wrong password.
+                        }
+                    */
+                    }
             }
         }
-    }
 
     private fun showAlert() {
     val builder = AlertDialog.Builder(this)
