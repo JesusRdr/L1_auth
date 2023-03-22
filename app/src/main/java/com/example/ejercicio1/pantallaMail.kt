@@ -12,13 +12,14 @@ import androidx.appcompat.app.AlertDialog
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import java.util.concurrent.TimeUnit
 import com.google.firebase.auth.PhoneMultiFactorGenerator
 import java.util.Objects
 
 // import kotlinx.android.synthetic.main.activity_pantalla_mail.*
-private var control: Number = 1
+private var control: Number = 2
 
 class pantallaMail : AppCompatActivity() {
 
@@ -155,7 +156,9 @@ class pantallaMail : AppCompatActivity() {
                         .currentUser
                         ?.multiFactor
                         ?.enroll(multiFactorAssertion, "My personal phone number")
-                       // ?.addOnCompleteListener()
+                        ?.addOnCompleteListener{
+
+                        }
                     println("completó el enroll despues del listener")
 
                 }else {
