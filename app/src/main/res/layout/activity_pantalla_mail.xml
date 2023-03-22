@@ -62,11 +62,11 @@
 
     <Button
         android:id="@+id/btnIn"
-        android:layout_width="97dp"
-        android:layout_height="54dp"
+        android:layout_width="145dp"
+        android:layout_height="52dp"
         android:layout_marginTop="204dp"
-        android:layout_marginEnd="164dp"
-        android:text="@string/signin"
+        android:layout_marginEnd="108dp"
+        android:text="SING IN - MFA"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,17 +91,6 @@
         android:text="@string/back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.897"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btn_sendOPT"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="348dp"
-        android:text="SEND OTP"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.706"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

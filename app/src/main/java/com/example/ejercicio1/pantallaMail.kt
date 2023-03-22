@@ -25,8 +25,6 @@ class pantallaMail : AppCompatActivity() {
 
         val edit_phone: EditText = findViewById(R.id.editPhoneMFA)
         edit_phone.visibility = View.INVISIBLE
-        val send_otp: Button = findViewById(R.id.btn_sendOPT)
-        send_otp.visibility = View.INVISIBLE
         val edit_CODE: EditText = findViewById(R.id.editTextCODE)
         edit_CODE.visibility = View.INVISIBLE
         val verification_val: Button = findViewById(R.id.btn_Verify)
@@ -60,8 +58,6 @@ class pantallaMail : AppCompatActivity() {
 
                             val edit_phone2: EditText = findViewById(R.id.editPhoneMFA)
                             edit_phone2.visibility = View.VISIBLE
-                            val send_otp: Button = findViewById(R.id.btn_sendOPT)
-                            send_otp.visibility = View.VISIBLE
 
                         } else {
                             showAlert()
@@ -100,18 +96,19 @@ class pantallaMail : AppCompatActivity() {
                             // signed in.
                             val user = FirebaseAuth.getInstance().currentUser
                             checkIfEmailVerified(user)
-                            // ...
-                            return@addOnCompleteListener
-                        }
-                        if (task.exception is FirebaseAuthMultiFactorException) {
+                            //     return@addOnCompleteListener
+
+                            //task.exception = FirebaseAuthMultiFactorException
+                            // Cómo le digo al código, que para este usuario sí quiero activar la MFA?
 
                             val edit_CODE2: EditText = findViewById(R.id.editTextCODE)
                             edit_CODE2.visibility = View.VISIBLE
                             val verification_val2: Button = findViewById(R.id.btn_Verify)
                             verification_val2.visibility = View.VISIBLE
-
-                            val multiFactorResolver =
-                                (task.exception as FirebaseAuthMultiFactorException).resolver
+                        }
+                        if (task.exception is FirebaseAuthMultiFactorException) {
+                            println(task.exception)
+                            val multiFactorResolver = (task.exception as FirebaseAuthMultiFactorException).resolver
                             // Ask user which second factor to use. Then, get
                             // the selected hint:
                             //   val selectedHint = multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
@@ -153,7 +150,7 @@ class pantallaMail : AppCompatActivity() {
 
             } // ESTE CIERRA CON if (edt.text.isNotEmpty() && . . .
         }
-
+/*
         val btn12: Button = findViewById(R.id.btn_Verify)
         btn12.setOnClickListener {
 // Ask user for the SMS verification code, then use it to get
@@ -174,6 +171,7 @@ class pantallaMail : AppCompatActivity() {
                 // ...
             }
         }
+        */
 
     }
 
@@ -219,8 +217,53 @@ class pantallaMail : AppCompatActivity() {
     }
 
 
-    private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+        override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+            // This callback will be invoked in two situations:
+            // 1) Instant verification. In some cases, the phone number can be
+            //    instantly verified without needing to send or enter a verification
+            //    code. You can disable this feature by calling
+            //    PhoneAuthOptions.builder#requireSmsValidation(true) when building
+            //    the options to pass to PhoneAuthProvider#verifyPhoneNumber().
+            // 2) Auto-retrieval. On some devices, Google Play services can
+            //    automatically detect the incoming verification SMS and perform
+            //    verification without user action.
+        //    this@pantallaMail.credential = credential
+            println("FUE onVerificationCompleted")
+        }
 
+        override fun onVerificationFailed(e: FirebaseException) {
+            // This callback is invoked in response to invalid requests for
+            // verification, like an incorrect phone number.
+            println("FUE onVerificationFailed")
+            if (e is FirebaseAuthInvalidCredentialsException) {
+                // Invalid request
+                // ...
+            } else if (e is FirebaseTooManyRequestsException) {
+                // The SMS quota for the project has been exceeded
+                // ...
+            }
+            // Show a message and update the UI
+            // ...
+        }
+
+        override fun onCodeSent(
+            verificationId: String, forceResendingToken: PhoneAuthProvider.ForceResendingToken
+        ) {
+            // The SMS verification code has been sent to the provided phone number.
+            // We now need to ask the user to enter the code and then construct a
+            // credential by combining the code with a verification ID.
+            // Save the verification ID and resending token for later use.
+        //    this@pantallaMail.verificationId = verificationId
+        //    this@pantallaMail.forceResendingToken = forceResendingToken
+
+            println("FUE OnCodeSent")
+
+            // ...
+        }
+    }
+    /*
+    private val callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(credential: PhoneAuthCredential) {
             // This callback will be invoked in two situations:
             // 1 - Instant verification. In some cases the phone number can be instantly
@@ -267,7 +310,7 @@ class pantallaMail : AppCompatActivity() {
 
         }
     }
-
+*/
     private fun checkIfEmailVerified(user : FirebaseUser?){
         if (user != null) {
             if (user.isEmailVerified) {
