@@ -18,26 +18,33 @@ import com.google.firebase.auth.PhoneMultiFactorGenerator
 import java.util.Objects
 
 // import kotlinx.android.synthetic.main.activity_pantalla_mail.*
+private var control: Number = 1
 
 class pantallaMail : AppCompatActivity() {
 
+    private lateinit var RESENDTOKEN: PhoneAuthProvider.ForceResendingToken
+    private lateinit var OTP: String
+
     private lateinit var number: String
     private lateinit var auth: FirebaseAuth
-    private lateinit var OTP_CODE_typed: String
-    private lateinit var verificationId: String
-    private lateinit var verificationCode: PhoneAuthProvider.ForceResendingToken
+
+    //private lateinit var verificationId: String
+    //private lateinit var verificationCode: PhoneAuthProvider.ForceResendingToken
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pantalla_mail)
 
-        //val edit_phone: EditText = findViewById(R.id.editPhoneMFA)
-        //edit_phone.visibility = View.INVISIBLE
-        val edit_CODE: EditText = findViewById(R.id.editTextCODE)
-        edit_CODE.visibility = View.INVISIBLE
-        val verification_val: Button = findViewById(R.id.btn_Verify)
-        verification_val.visibility = View.INVISIBLE
+//INICIALIZANDO VARIABLES
+
+        if (control == 1){ // SE EJECUTA SOLO LA PRIMERA VEZ
+
+                val edit_CODE: EditText = findViewById(R.id.editTextCODE)
+                edit_CODE.visibility = View.INVISIBLE
+                val verification_val: Button = findViewById(R.id.btn_Verify)
+                verification_val.visibility = View.INVISIBLE
+    }
 
         auth = FirebaseAuth.getInstance()
 
@@ -52,6 +59,7 @@ class pantallaMail : AppCompatActivity() {
     }
 
     // Constructor para hacer signUP
+    @SuppressLint("SuspiciousIndentation")
     private fun setup() {
         title = "Email & Password - Verification Link"
         val btn2: Button = findViewById(R.id.btnUp)
@@ -67,8 +75,6 @@ class pantallaMail : AppCompatActivity() {
                             val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
                             verifyEmail(user)
 
-                            println("ya debió verificar el user")
-
                             // REGISTRO PARA MFA
                             val phone_editText2: EditText = findViewById(R.id.editPhoneMFA)
                             number = phone_editText2.text.trim().toString()
@@ -82,13 +88,18 @@ class pantallaMail : AppCompatActivity() {
                                     val multiFactorSession = task.result
                                     val phoneAuthOptions = PhoneAuthOptions.newBuilder(auth)
                                         .setPhoneNumber(number)
-                                        .setTimeout(30L, TimeUnit.SECONDS)
+                                        .setTimeout(60L, TimeUnit.SECONDS)
                                         .setActivity(this)
                                         .setMultiFactorSession(multiFactorSession)
                                         .setCallbacks(callbacks)
                                         .build()
                                     // Send SMS verification code.
                                     PhoneAuthProvider.verifyPhoneNumber(phoneAuthOptions)
+
+                                    /*
+                                    println(OTP)
+                                    println(resendToken)
+                                    */
                                 }
                             }
                             val edit_CODE: EditText = findViewById(R.id.editTextCODE)
@@ -96,43 +107,65 @@ class pantallaMail : AppCompatActivity() {
                             val verification_val: Button = findViewById(R.id.btn_Verify)
                             verification_val.visibility = View.VISIBLE
 
+                            // waiting()
+
+                            control = 2
                             // Ask user for the verification code.
                             // WILL CONTINUE
+/*
+                                    val credential = PhoneAuthProvider.getCredential(verificationId, verificationCode)
+                                    val multiFactorAssertion = PhoneMultiFactorGenerator.getAssertion(credential)
+
+                                    println("entró al enroll")
+                                    // Complete enrollment.
+                                    FirebaseAuth.getInstance()
+                                        .currentUser
+                                        ?.multiFactor
+                                        ?.enroll(multiFactorAssertion, "My personal phone number")
+                                    // ?.addOnCompleteListener
+                                    println("completó el enroll despues del listener")
+        */
+                                    // TERMINA EL ENROLLMENT
 
                         } else {
                             showAlert()
                         }
                     }
             }
+        }
 
-            val btn14: Button = findViewById(R.id.btn_Verify)
-            btn14.setOnClickListener {
-                val edit_verification_val: EditText = findViewById(R.id.editTextCODE)
-                OTP_CODE_typed = edit_verification_val.text.trim().toString()
-                if (OTP_CODE_typed.isNotEmpty()) {
-                    if (OTP_CODE_typed.length == 6){
+        val btn15: Button = findViewById(R.id.btn_Verify)
+        btn15.setOnClickListener {
+            println("si paso el boton de verify")
 
-                    val credential = PhoneAuthProvider.getCredential(
-                        verificationId,
-                        verificationCode.toString()
-                    )
-                    val multiFactorAssertion =
-                        PhoneMultiFactorGenerator.getAssertion(credential)
+            OTP = intent.getStringExtra("OTP").toString()
 
+            val edit_verification_val: EditText = findViewById(R.id.editTextCODE)
+            val OTP_CODE_typed = edit_verification_val.text.toString()
+
+            if (OTP_CODE_typed.isNotEmpty()) {
+                println("si entró al primer IF (NOT EMPTY)")
+                if (OTP_CODE_typed.length == 6){
+                    println("entró al segundo IF")
+                    val credential = PhoneAuthProvider.getCredential(OTP, OTP_CODE_typed)
+                    val multiFactorAssertion = PhoneMultiFactorGenerator.getAssertion(credential)
+                    println("entró al enroll")
                     // Complete enrollment.
                     FirebaseAuth.getInstance()
                         .currentUser
                         ?.multiFactor
                         ?.enroll(multiFactorAssertion, "My personal phone number")
-                       // ?.addOnCompleteListener
+                       // ?.addOnCompleteListener()
+                    println("completó el enroll despues del listener")
+
                 }else {
-                        Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
-                    }
-            }else{
-                    Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
                 }
+            }else{
+                Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         // Constructor para hacer Login. YA DEBE ESTAR LLENO EL NUMERO DE TELEFONO PARA HACER EL LOGIN
 
@@ -331,14 +364,19 @@ class pantallaMail : AppCompatActivity() {
             // We now need to ask the user to enter the code and then construct a
             // credential by combining the code with a verification ID.
             // Save the verification ID and resending token for later use.
-           //this@pantallaMail.verificationId = verificationId
-           //this@pantallaMail.forceResendingToken = forceResendingToken
+
+            //this@pantallaMail.verificationId = OTP
+            //this@pantallaMail.forceResendingToken = ResendToken
             println("FUE OnCodeSent")
+
             val intent = Intent(this@pantallaMail, pantallaMail::class.java) //MINUTO 17:20
-            intent.putExtra("verificationId", verificationId)
-            intent.putExtra("forceResendingToken", forceResendingToken)
-            //intent.putExtra("phoneNumber", number)
+            intent.putExtra("OTP", verificationId)
+            intent.putExtra("RESENDTOKEN", forceResendingToken)
+            intent.putExtra("phoneNumber", number)
+            intent.putExtra("control", control)
             startActivity(intent)
+
+
             // ...
         }
     }

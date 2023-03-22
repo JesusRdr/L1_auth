@@ -126,7 +126,7 @@
         android:layout_marginTop="404dp"
         android:ems="10"
         android:hint="VERIFICATION CODE"
-        android:inputType="number"
+        android:inputType="phone"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.462"
