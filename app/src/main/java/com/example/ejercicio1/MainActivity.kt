@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.appcompat.app.AlertDialog
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -32,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title="HOME"
+
+        val img_view: ImageView = findViewById(R.id.imageView5)
+        img_view.visibility = View.INVISIBLE
+        val fb_btn: Button = findViewById(R.id.btn_fbk)
+        fb_btn.visibility = View.INVISIBLE
 
         val btn: Button = findViewById(R.id.btn_mail)
         btn.setOnClickListener {

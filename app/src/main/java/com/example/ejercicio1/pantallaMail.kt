@@ -32,7 +32,7 @@ import com.google.firebase.auth.FirebaseAuthMultiFactorException
 import java.util.Objects
 
 // import kotlinx.android.synthetic.main.activity_pantalla_mail.*
-private var control: Number = 2
+private var control: Number = 1
 
 class pantallaMail : AppCompatActivity() {
 /*
@@ -67,8 +67,6 @@ class pantallaMail : AppCompatActivity() {
                 edit_CODE.visibility = View.INVISIBLE
                 val verification_val: Button = findViewById(R.id.btn_Verify)
                 verification_val.visibility = View.INVISIBLE
-                val verification_val2: Button = findViewById(R.id.btn_Verify2)
-                verification_val2.visibility = View.INVISIBLE
     }
 
         auth = FirebaseAuth.getInstance()
@@ -104,7 +102,6 @@ class pantallaMail : AppCompatActivity() {
                             val phone_editText2: EditText = findViewById(R.id.editPhoneMFA)
                             number = phone_editText2.text.trim().toString()
 
-
                             //val multiFactorAssertion = PhoneMultiFactorGenerator.getAssertion(credential)
                             user?.multiFactor?.session?.addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
@@ -125,7 +122,10 @@ class pantallaMail : AppCompatActivity() {
                                     println(OTP)
                                     println(resendToken)
                                     */
+
+
                                 }
+
                             }
                             val edit_CODE: EditText = findViewById(R.id.editTextCODE)
                             edit_CODE.visibility = View.VISIBLE
@@ -156,7 +156,16 @@ class pantallaMail : AppCompatActivity() {
                             showAlert()
                         }
                     }
+            }else if(edt.text.isNotEmpty() && edt2.text.isNotEmpty()){
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(edt.text.toString(), edt2.text.toString()).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        Toast.makeText(this@pantallaMail, "Single Email - Password account Registered", Toast.LENGTH_LONG).show()
+                        waiting()
+                        showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                        val user: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+                    }}
             }
+
         }
 
         val btn15: Button = findViewById(R.id.btn_Verify)
@@ -183,7 +192,7 @@ class pantallaMail : AppCompatActivity() {
                         ?.addOnCompleteListener{
 
                         }
-                    println("completó el enroll despues del listener")
+                    Toast.makeText(this@pantallaMail, "MFA Enroll completed. Go to SIGN IN...", Toast.LENGTH_LONG).show()
 
                 }else {
                     Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
@@ -313,7 +322,10 @@ class pantallaMail : AppCompatActivity() {
                                 .setCallbacks(generateCallbacks())
                                 .setTimeout(60L, TimeUnit.SECONDS)
                                 .build()
+
                         )
+                        Toast.makeText(this@pantallaMail, "SMS Code sent", Toast.LENGTH_SHORT).show()
+
 /*
                         val edit_CODE: EditText = findViewById(R.id.editTextCODE)
                         edit_CODE.visibility = View.VISIBLE
@@ -322,7 +334,9 @@ class pantallaMail : AppCompatActivity() {
 */ //ENSEÑA LOS BOTONES QUE REQUIERO
 
                         OTP = intent.getStringExtra("OTP").toString()
-
+                        println("antes del DIALOG")
+                        println("OTP")
+                        println(OTP)
               // AQUI EMPIEZA EL ALERT DIALOG
 
                         val builder = AlertDialog.Builder(this)
@@ -333,9 +347,54 @@ class pantallaMail : AppCompatActivity() {
                         builder.setView(input)
                         //builder.setView(view) // PASAR LA VISTA AL BUILDER
 
-                        builder.setPositiveButton("OK"){
-                            dialog,which ->
+                        builder.setPositiveButton("OK"){_, _ ->
+                            // Aquí se ejecuta el código después de que el usuario introduce el código y hace clic en Aceptar
+                            println("Aquí se ejecuta el código después de que el usuario introduce el código y hace clic en Aceptar")
+                            println("-")
+                            val nombre = input.text.toString()
                             println("si pasó al ok")
+                            println(nombre)
+                            println("-")
+                            println("Continúa con el flujo del programa aquí")
+
+                                    val OTP_CODE_typed = nombre;
+                                    if (OTP_CODE_typed.isNotEmpty()) {
+                                        println("si entró al primer IF (NOT EMPTY)")
+                                        if (OTP_CODE_typed.length == 6) {
+                                            println("si entró al SEGUNDO IF == 6")
+                                            // Ask user for the SMS verification code, then use it to get
+                                            // a PhoneAuthCredential:
+                                            val credential = PhoneAuthProvider.getCredential(OTP, OTP_CODE_typed)
+                                            // Initialize a MultiFactorAssertion object with the
+                                            // PhoneAuthCredential.
+                                            val multiFactorAssertion: MultiFactorAssertion =
+                                                PhoneMultiFactorGenerator.getAssertion(credential)
+                                            //if (::multiFactorResolver.isInitialized) {
+                                            // Complete sign-in.
+                                            // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
+
+                                            multiFactorResolver.resolveSignIn(multiFactorAssertion)
+                                                .addOnCompleteListener { task ->
+                                                    if (task.isSuccessful) {
+
+                                                        Toast.makeText(this,"Double Factor succeeded, WELCOME!", Toast.LENGTH_LONG).show()
+                                                        val intent: Intent = Intent(this, Logged_screen::class.java)
+                                                        startActivity(intent)
+                                                    } else {
+                                                        Toast.makeText(this,"Double Factor entered Wrong, sorry", Toast.LENGTH_LONG).show()
+                                                    }
+                                                    // ...
+                                                }
+                                        } else {
+                                            Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }else {
+                                        Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
+                                    }
+
+                                    println("Salió del dialog")
+                                    println("sigue afuera")
+
                         }
                         builder.setNegativeButton("Cancelar"){
                             dialog,which ->
@@ -345,9 +404,10 @@ class pantallaMail : AppCompatActivity() {
                         }
                         val dialog = builder.create()
                         dialog.setOnDismissListener{
-                            val nombre = input.text.toString()
-                            println("setOnDismiss")
-                            println(nombre)
+                            //val nombre = input.text.toString()
+                            println("Entró al setOnDismiss")
+                            //println(nombre)
+
                         }
                         dialog.show()
 
@@ -373,68 +433,23 @@ class pantallaMail : AppCompatActivity() {
                         // val OTP_CODE_typed = edit_verification_val.text.toString()
               // AQUI TERMINA EL ALERT DIALOG
 
-                        println("el programa ha Salio del DIALOG")
-
-                        val OTP_CODE_typed = OTP;
-                        if (OTP_CODE_typed.isNotEmpty()) {
-                            println("si entró al primer IF (NOT EMPTY)")
-                            if (OTP_CODE_typed.length == 6) {
-                                println("si entró al SEGUNDO IF == 6")
-                                // Ask user for the SMS verification code, then use it to get
-                                // a PhoneAuthCredential:
-
-                                val credential =
-                                    PhoneAuthProvider.getCredential(OTP, OTP_CODE_typed)
-                                // Initialize a MultiFactorAssertion object with the
-                                // PhoneAuthCredential.
-                                val multiFactorAssertion: MultiFactorAssertion =
-                                    PhoneMultiFactorGenerator.getAssertion(credential)
-                                //if (::multiFactorResolver.isInitialized) {
-                                // Complete sign-in.
-                                // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
-
-                                multiFactorResolver.resolveSignIn(multiFactorAssertion)
-                                    .addOnCompleteListener { task ->
-                                        if (task.isSuccessful) {
-                                            val edt: EditText =
-                                                findViewById<EditText>(R.id.editTextTextEmailAddress)
-                                            val edt2: EditText =
-                                                findViewById<EditText>(R.id.editTextTextPassword)
-                                            println("ENTRó A AUTENTICAR")
-                                            FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                                                edt.text.toString(),
-                                                edt2.text.toString()
-                                            ).addOnCompleteListener {
-                                                showHome(it.result?.user?.email ?: "", ProviderType.PRO)
-                                            }
-
-
-                                        } else {
-                                            println("NO SE PORQUE, PERO JUSTO ANTES DE AUTENTICAR.... NO AUTENTICó")
-                                        }
-                                        // ...
-                                    }
-                                // }else{println("NO ESTÁ INICIALIZADA LA VARIABLE:   multiFactorResolver")}
-
-                            } else {
-                                Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
-                            }
-                        }else {
-                            Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
-                        }
-
-                        println("Salió del dialog")
-                        println("sigue afuera")
-
                     } else {
                         // Handle other errors such as wrong password.
                         println("Algo metiste mal para mandar el mensaje")
                     }
-
                 }  // CIERRA EL TASK  FirebaseAuth.getInstance()...
+            }else if(edt.text.isNotEmpty() && edt2.text.isNotEmpty()){
+                println(edt)
+                println(edt2)
+                FirebaseAuth.getInstance().signInWithEmailAndPassword(edt.text.toString(),edt2.text.toString()).addOnCompleteListener {
+                    if(it.isSuccessful) {
+                        // USER NOT ENROLLED WITH MFA
+                        showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                    }}
+                Toast.makeText(this,"Getting in...", Toast.LENGTH_SHORT).show()
             }
-            println("NO INTRODUJO VALORES EN EL CORREO // PASSWORD")
-        }
+            }
+
 
 /*
         val btn16: Button = findViewById(R.id.btn_Verify2)
@@ -526,18 +541,20 @@ class pantallaMail : AppCompatActivity() {
             ?.addOnCompleteListener(this){
                     task->
                 if(task.isComplete){
-                    Toast.makeText(this,"Email has send", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Email sent, please in 30 seconds", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"Email sent, please in 30 seconds", Toast.LENGTH_LONG).show()
                     //showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
                 }
                 else{
                     Toast.makeText(this,"An error has occurred while sending email", Toast.LENGTH_LONG).show()
                 }
 
-                        for (i in 1..30){
-                            waiting()
-                            println("esperando 30 segundos")
-                        }
+                for (i in 1..30){
+                    waiting()
+                    println("ESPERE")
+                    println(31-i)
 
+                }
             }
     }
 
@@ -555,6 +572,7 @@ class pantallaMail : AppCompatActivity() {
             //    verification without user action.
 
            //this@pantallaMail.credential = credential
+            Toast.makeText(this@pantallaMail, "SMS Code sent", Toast.LENGTH_LONG).show()
             println("FUE onVerificationCompleted")
         }
 
@@ -672,6 +690,7 @@ class pantallaMail : AppCompatActivity() {
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
                 lastVerificationId = verificationId
+                OTP = verificationId
                 //binding.finishMfaSignIn.isClickable = true
             }
 

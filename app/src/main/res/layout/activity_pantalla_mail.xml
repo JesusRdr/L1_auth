@@ -27,16 +27,6 @@
  -->
 
 
-    <Button
-        android:id="@+id/btn_Verify2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="76dp"
-        android:text="Verify"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextCODE" />
-
     <EditText
         android:id="@+id/editTextTextEmailAddress"
         android:layout_width="wrap_content"
@@ -71,27 +61,27 @@
         tools:ignore="LabelFor,VisualLintTextFieldSize" />
 
     <Button
-        android:id="@+id/btnIn"
-        android:layout_width="145dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="204dp"
-        android:layout_marginEnd="108dp"
-        android:text="SING IN - MFA"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/btnUp"
-        android:layout_width="97dp"
+        android:layout_width="100dp"
         android:layout_height="54dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="152dp"
         android:text="@string/signup"
         app:layout_constraintEnd_toStartOf="@+id/btnIn"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.585"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword"
         tools:ignore="DuplicateIds" />
+
+    <Button
+        android:id="@+id/btnIn"
+        android:layout_width="117dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="316dp"
+        android:layout_marginEnd="80dp"
+        android:text="SING IN"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnBack"
@@ -106,16 +96,16 @@
 
     <EditText
         android:id="@+id/editPhoneMFA"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="292dp"
+        android:layout_width="292dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="204dp"
         android:ems="10"
-        android:hint="Phone for MFA"
+        android:hint="Introduce Phone if MFA required"
         android:inputType="phone"
         android:minHeight="48dp"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.835"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -126,8 +116,6 @@
         android:layout_marginStart="92dp"
         android:layout_marginTop="24dp"
         android:text="Verify"
-        app:layout_constraintEnd_toStartOf="@+id/btn_Verify2"
-        app:layout_constraintHorizontal_bias="0.014"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextCODE" />
 
@@ -135,14 +123,14 @@
         android:id="@+id/editTextCODE"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="404dp"
+        android:layout_marginTop="440dp"
         android:ems="10"
         android:hint="VERIFICATION CODE"
         android:inputType="phone"
         android:minHeight="48dp"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.462"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
