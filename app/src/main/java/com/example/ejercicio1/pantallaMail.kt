@@ -45,7 +45,7 @@ class pantallaMail : AppCompatActivity() {
     private lateinit var number: String
     private lateinit var auth: FirebaseAuth
 
-    //private lateinit var multiFactorResolver: MultiFactorResolver
+    // private lateinit var multiFactorResolver: MultiFactorResolver
 
     private var lastPhoneAuthCredential: PhoneAuthCredential? = null
     private var lastVerificationId: String? = null
@@ -289,6 +289,7 @@ class pantallaMail : AppCompatActivity() {
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
                     }
                     if (it.exception is FirebaseAuthMultiFactorException) { // EN LUGAR DE IT, Tenía "task"
+
                         val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
 
                         val phone_editText2: EditText = findViewById(R.id.editPhoneMFA)
@@ -349,9 +350,8 @@ class pantallaMail : AppCompatActivity() {
                         PhoneMultiFactorGenerator.getAssertion(credential)
                     //if (::multiFactorResolver.isInitialized) {
                         // Complete sign-in.
-                    // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
-                    val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
-
+                   //val multiFactorResolver = (FirebaseAuthMultiFactorException).resolver
+                        println(multiFactorResolver)
                         multiFactorResolver.resolveSignIn(multiFactorAssertion)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
