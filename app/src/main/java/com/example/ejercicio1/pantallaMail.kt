@@ -3,6 +3,7 @@ package com.example.ejercicio1
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -289,16 +290,18 @@ class pantallaMail : AppCompatActivity() {
                         showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
                     }
                     if (it.exception is FirebaseAuthMultiFactorException) { // EN LUGAR DE IT, Tenía "task"
-                        val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
+                        val multiFactorResolver =
+                            (it.exception as FirebaseAuthMultiFactorException).resolver
 
                         val phone_editText2: EditText = findViewById(R.id.editPhoneMFA)
                         number = phone_editText2.text.trim().toString()
                         number = "+52$number"
 
-                                // Ask user which second factor to use. Then, get
-                                // the selected hint:
+                        // Ask user which second factor to use. Then, get
+                        // the selected hint:
                         val selectedIndex = 0
-                        val selectedHint = multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
+                        val selectedHint =
+                            multiFactorResolver.hints[selectedIndex] as PhoneMultiFactorInfo
                         //val selectedHint = multiFactorResolver.hints as PhoneMultiFactorInfo
 
                         // Send the SMS verification code.
@@ -311,12 +314,117 @@ class pantallaMail : AppCompatActivity() {
                                 .setTimeout(60L, TimeUnit.SECONDS)
                                 .build()
                         )
-
+/*
                         val edit_CODE: EditText = findViewById(R.id.editTextCODE)
                         edit_CODE.visibility = View.VISIBLE
                         val verification_val2: Button = findViewById(R.id.btn_Verify2)
                         verification_val2.visibility = View.VISIBLE
+*/ //ENSEÑA LOS BOTONES QUE REQUIERO
 
+                        OTP = intent.getStringExtra("OTP").toString()
+
+              // AQUI EMPIEZA EL ALERT DIALOG
+
+                        val builder = AlertDialog.Builder(this)
+                        builder.setTitle("Ingrese su codigo OTP")
+                        //val view = layoutInflater.inflate(R.layout.dialog, null)
+
+                        val input = EditText(this)
+                        builder.setView(input)
+                        //builder.setView(view) // PASAR LA VISTA AL BUILDER
+
+                        builder.setPositiveButton("OK"){
+                            dialog,which ->
+                            println("si pasó al ok")
+                        }
+                        builder.setNegativeButton("Cancelar"){
+                            dialog,which ->
+                            dialog.cancel()
+                            println("si pasó al CANCELAR")
+
+                        }
+                        val dialog = builder.create()
+                        dialog.setOnDismissListener{
+                            val nombre = input.text.toString()
+                            println("setOnDismiss")
+                            println(nombre)
+                        }
+                        dialog.show()
+
+
+                        /*
+                        val dialog = builder.create() // CREANDO EL DIALOG
+                        dialog.show()
+                        val cajaOTP: String = view.findViewById<View?>(R.id.caja_OTP_VERIFY).toString()
+                        val cajaBTN: Button = view.findViewById(R.id.cajaBTN_VERIFY)
+                                cajaBTN.setOnClickListener{
+                                    if (cajaOTP.isNotEmpty()){
+                                        // val cajaOTP: String = findViewById(R.id.caja_OTP_VERIFY).toString()
+                                        Toast.makeText(this,"THANKS",Toast.LENGTH_LONG).show()
+                                        println("pasó el if del dialog")
+                                        println(cajaOTP)
+                                        dialog.hide()
+                                    }else{
+                                        Toast.makeText(this,"Datos Incorrectos",Toast.LENGTH_LONG).show()
+                                    }
+                                }
+                        */
+                        // val edit_verification_val: EditText = findViewById(R.id.editTextCODE)
+                        // val OTP_CODE_typed = edit_verification_val.text.toString()
+              // AQUI TERMINA EL ALERT DIALOG
+
+                        println("el programa ha Salio del DIALOG")
+
+                        val OTP_CODE_typed = OTP;
+                        if (OTP_CODE_typed.isNotEmpty()) {
+                            println("si entró al primer IF (NOT EMPTY)")
+                            if (OTP_CODE_typed.length == 6) {
+                                println("si entró al SEGUNDO IF == 6")
+                                // Ask user for the SMS verification code, then use it to get
+                                // a PhoneAuthCredential:
+
+                                val credential =
+                                    PhoneAuthProvider.getCredential(OTP, OTP_CODE_typed)
+                                // Initialize a MultiFactorAssertion object with the
+                                // PhoneAuthCredential.
+                                val multiFactorAssertion: MultiFactorAssertion =
+                                    PhoneMultiFactorGenerator.getAssertion(credential)
+                                //if (::multiFactorResolver.isInitialized) {
+                                // Complete sign-in.
+                                // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
+
+                                multiFactorResolver.resolveSignIn(multiFactorAssertion)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            val edt: EditText =
+                                                findViewById<EditText>(R.id.editTextTextEmailAddress)
+                                            val edt2: EditText =
+                                                findViewById<EditText>(R.id.editTextTextPassword)
+                                            println("ENTRó A AUTENTICAR")
+                                            FirebaseAuth.getInstance().signInWithEmailAndPassword(
+                                                edt.text.toString(),
+                                                edt2.text.toString()
+                                            ).addOnCompleteListener {
+                                                showHome(it.result?.user?.email ?: "", ProviderType.PRO)
+                                            }
+
+
+                                        } else {
+                                            println("NO SE PORQUE, PERO JUSTO ANTES DE AUTENTICAR.... NO AUTENTICó")
+                                        }
+                                        // ...
+                                    }
+                                // }else{println("NO ESTÁ INICIALIZADA LA VARIABLE:   multiFactorResolver")}
+
+                            } else {
+                                Toast.makeText(this,"Please Enter Valid OTP", Toast.LENGTH_SHORT).show()
+                            }
+                        }else {
+                            Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
+                        }
+
+                        println("Salió del dialog")
+                        println("sigue afuera")
 
                     } else {
                         // Handle other errors such as wrong password.
@@ -328,6 +436,7 @@ class pantallaMail : AppCompatActivity() {
             println("NO INTRODUJO VALORES EN EL CORREO // PASSWORD")
         }
 
+/*
         val btn16: Button = findViewById(R.id.btn_Verify2)
         btn16.setOnClickListener {
             OTP = intent.getStringExtra("OTP").toString()
@@ -350,7 +459,6 @@ class pantallaMail : AppCompatActivity() {
                     //if (::multiFactorResolver.isInitialized) {
                         // Complete sign-in.
                     // val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
-                    val multiFactorResolver = (it.exception as FirebaseAuthMultiFactorException).resolver
 
                         multiFactorResolver.resolveSignIn(multiFactorAssertion)
                             .addOnCompleteListener { task ->
@@ -382,7 +490,7 @@ class pantallaMail : AppCompatActivity() {
             }else {
                 Toast.makeText(this,"Please Enter OTP", Toast.LENGTH_SHORT).show()
             }
-        }
+        }*/
     }
 
     private fun showAlert() {
